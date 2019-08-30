@@ -3,6 +3,7 @@ package com.neuedu.entity;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
+import java.util.List;
 
 import javax.accessibility.Accessible;
 
@@ -10,6 +11,7 @@ import com.neuedu.action.ActionAble;
 import com.neuedu.client.GameClient;
 import com.neuedu.constant.Constant;
 import com.neuedu.util.GetImageUtil;
+import com.neuedu.util.SinglePlay;
 
 /**
 * @ClassName: Plane
@@ -20,6 +22,9 @@ import com.neuedu.util.GetImageUtil;
 *
 */
 public class Plane extends GameObj implements ActionAble{
+	
+	SinglePlay play = new SinglePlay();
+	
 	
 	// 速度
 	private int speed;
@@ -32,6 +37,12 @@ public class Plane extends GameObj implements ActionAble{
 	// 判断是我军还是敌军
 	public boolean isGood;
 	
+	// 添加飞机子弹等级变量
+	public int BulletLevel = 1;;
+	
+	// 添加血量值
+	public int blood;
+	
 	public Plane() {
 		
 	}
@@ -42,6 +53,7 @@ public class Plane extends GameObj implements ActionAble{
 		this.speed = 15;
 		this.gc = gc;
 		this.isGood = isGood;
+		this.blood = 100;
 	}
 	// 移动的方法
 	@Override
@@ -66,6 +78,7 @@ public class Plane extends GameObj implements ActionAble{
 	public void draw(Graphics g) {
 		g.drawImage(img, x, y, null);
 		move();
+		g.drawString("当前血量:"+blood, 10, 80);
 		
 	}
 	// 处理飞机边界问题
@@ -132,7 +145,8 @@ public class Plane extends GameObj implements ActionAble{
 	}
 	// 我方飞机的开火
 	public void fire() {
-		Bullet b = new Bullet(x, y, "bullet/zidan.png",gc,true);
+		play.play("com/neuedu/sound/bullet.mp3");
+		Bullet b = new Bullet(x-30, y, "bullet/zidan_0"+BulletLevel+".png",gc,true);
 		gc.bullets.add(b);
 	}
 	
@@ -141,6 +155,29 @@ public class Plane extends GameObj implements ActionAble{
 			return new Rectangle(x, y, this.img.getWidth(null), this.img.getHeight(null));
 		}
 	
+	// 检测我方飞机碰到道具
+		public void containItem(Prop prop) {
+			if(this.getRec().intersects(prop.getRect())) {
+				// 移除道具
+				gc.props.remove(prop);
+				if(BulletLevel>5) {
+					BulletLevel = 6;
+					return;
+				}
+				// 更改子弹等级
+				this.BulletLevel +=1;
+			}
+		}
+	// 检测我方飞机碰撞到多个道具
+		public void containItems(List<Prop> props) {
+			if(props==null) {
+				return;
+			}else {
+				for(int i=0;i<props.size();i++) {
+					containItem(props.get(i));
+				}
+			}
+		}
 	
 
 }
