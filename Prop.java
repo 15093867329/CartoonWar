@@ -1,6 +1,7 @@
 package com.neuedu.entity;
 
 import java.awt.Graphics;
+import java.awt.Rectangle;
 
 import com.neuedu.action.ActionAble;
 import com.neuedu.constant.Constant;
@@ -46,7 +47,12 @@ public class Prop extends GameObj implements ActionAble {
 	@Override
 	public void draw(Graphics g) {
 		g.drawImage(img, x, y, null);
+		move();
 		
+	}
+	// 拿到当前道具存在的矩形
+	public Rectangle getRect() {
+		return new Rectangle(x, y, this.img.getWidth(null), this.img.getHeight(null));
 	}
 
 }
