@@ -16,11 +16,13 @@ import java.util.List;
 import com.neuedu.constant.Constant;
 import com.neuedu.entity.BackGround;
 import com.neuedu.entity.Boom;
+import com.neuedu.entity.Boss;
 import com.neuedu.entity.Bullet;
 import com.neuedu.entity.EnemyPlane;
 import com.neuedu.entity.Plane;
 import com.neuedu.entity.Prop;
 import com.neuedu.util.GetImageUtil;
+import com.neuedu.util.SoundPlayer;
 
 /**
 * @ClassName: GameClient
@@ -55,6 +57,9 @@ public class GameClient extends Frame {
 	// 创建敌方集合
 	public List<Plane> enemys = new ArrayList<>();
 	
+	// 创建BOSS集合
+	public List<Plane> bosss = new ArrayList<>();
+	
 	// 解决图片闪烁问题
 	public void update(Graphics g) {
 		Image backImg = createImage(Constant.GAME_WIDTH,Constant.GAME_HEIGHT);
@@ -71,6 +76,10 @@ public class GameClient extends Frame {
 	
 	// 生成客户端窗口的方法
 	public void launchFrame() {
+		
+		SoundPlayer soundPlayer = new SoundPlayer("com/neuedu/sound/game.mp3");
+		soundPlayer.start();
+		
 		this.setSize(Constant.GAME_WIDTH, Constant.GAME_HEIGHT);
 		this.setTitle("卡通大作战");
 		// 窗口显示
@@ -125,19 +134,34 @@ public class GameClient extends Frame {
 		EnemyPlane enemy1 = new EnemyPlane(600,50,1,this,false);
 		EnemyPlane enemy2 = new EnemyPlane(300,50,1,this,false);
 		EnemyPlane enemy3 = new EnemyPlane(50,50,1,this,false);
+		EnemyPlane enemy4 = new EnemyPlane(600,-200,1,this,false);
+		EnemyPlane enemy5 = new EnemyPlane(300,-200,1,this,false);
+		EnemyPlane enemy6 = new EnemyPlane(50,-200,1,this,false);
+		EnemyPlane enemy7 = new EnemyPlane(600,-400,1,this,false);
+		EnemyPlane enemy8 = new EnemyPlane(300,-400,1,this,false);
 		// 向敌方容器中添加敌人
 		enemys.add(enemy1);
 		enemys.add(enemy2);
 		enemys.add(enemy3);
-	}
+		enemys.add(enemy4);
+		enemys.add(enemy5);
+		enemys.add(enemy6);
+		enemys.add(enemy7);
+		enemys.add(enemy8);
+		// 添加BOSS
+		bosss.add(new Boss(300,-200,this,false));
 	
+	}
 	
 	// 重写paint方法
 	@Override
 	public void paint(Graphics g) {
 		backImg.draw(g);
 		for(int i=0;i<planes.size();i++) {
-			planes.get(i).draw(g);
+			Plane plane2 = planes.get(i);
+			plane2.draw(g);
+			plane2.containItems(props);
+			
 		}
 		// 循环画出每个子弹
 		for(int i=0;i<bullets.size();i++) {
@@ -145,6 +169,7 @@ public class GameClient extends Frame {
 			bullet.draw(g);
 			bullet.hitMonsters(enemys);
 			bullet.hitMonsters(planes);
+			bullet.hitMonsters(bosss);
 		}
 		g.drawString("当前子弹数量:"+bullets.size(), 10, 40);
 		g.drawString("当前敌机的数量:"+enemys.size(), 10, 60);
@@ -163,11 +188,16 @@ public class GameClient extends Frame {
 		for(int i=0;i<props.size();i++) {
 				props.get(i).draw(g);
 		}
+		if(enemys.size()==0) {
+			// 循环画BOSS
+			for(int i=0;i<bosss.size();i++) {
+				bosss.get(i).draw(g);
+		}
 		
 	}
 	
 	
-	
+	}
 	// 内部类
 	class paintThread extends Thread{
 		public void run() {
@@ -182,4 +212,6 @@ public class GameClient extends Frame {
 		}
 	} 
 
+
+	
 }
