@@ -9,6 +9,7 @@ import com.neuedu.action.ActionAble;
 import com.neuedu.client.GameClient;
 import com.neuedu.constant.Constant;
 import com.neuedu.util.GetImageUtil;
+import com.neuedu.util.SinglePlay;
 
 /**
 * @ClassName: Bullet
@@ -19,6 +20,10 @@ import com.neuedu.util.GetImageUtil;
 *
 */
 public class Bullet extends GameObj implements ActionAble {
+	
+	// 射击单次播放音乐的对象
+	SinglePlay singlePlay = new SinglePlay();
+	
 	// 创建速度属性
 	private Integer speed;
 	
@@ -50,7 +55,7 @@ public class Bullet extends GameObj implements ActionAble {
 	}
 	@Override
 	public void draw(Graphics g) {
-		g.drawImage(img, x+48, y-60, null);
+		g.drawImage(img, x+68, y-60, null);
 		move();
 		outOfBounds();
 	}
@@ -70,25 +75,45 @@ public class Bullet extends GameObj implements ActionAble {
 		if(this.getRec().intersects(plane.getRec())&&this.isGood!=plane.isGood) {
 			boom = new Boom(plane.x, plane.y,gc);
 			if(plane.isGood) {
-			    // 销毁自身
-			    gc.planes.remove(plane);
-			    // 添加爆炸
-			    gc.booms.add(boom);
-			}else {
-				// 移除打中的敌人
-				gc.enemys.remove(plane);
+				plane.blood -=5;
+				if(plane.blood == 0) {
+					 // 销毁自身
+				    gc.planes.remove(plane);
+				    // 添加爆炸
+				    gc.booms.add(boom);
+				}
 				// 移除子弹
 				gc.bullets.remove(this);
-				// 添加爆炸
-				gc.booms.add(boom);
-				// 随机生成一个道具
-				if(random.nextInt(500)>400) {
-					Prop prop = new Prop(plane.x, plane.y, "prop/daoju1.png");
-					gc.props.add(prop);
+			}else {
+				singlePlay.play("com/neuedu/sound/enemy.mp3");
+				if(plane instanceof Boss) {
+					plane.blood -= 100;
+					gc.bullets.remove(this);
+					if(plane.blood<=0)
+					{
+						gc.bosss.remove(plane);
+						// 移除子弹
+						
+					}
+					
+				}else {
+					singlePlay.play("com/neuedu/sound/enemy.mp3");
+					// 移除打中的敌人
+					gc.enemys.remove(plane);
+					// 移除子弹
+					gc.bullets.remove(this);
+					
+					// 随机生成一个道具
+					if(random.nextInt(500)>0) {
+						Prop prop = new Prop(plane.x, plane.y, "prop/daoju1.png");
+						gc.props.add(prop);
+					}
 				}
 				
+				
 			}
-			
+			// 添加爆炸
+			gc.booms.add(boom);
 			return true;
 		}
 		return false;
