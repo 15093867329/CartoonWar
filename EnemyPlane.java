@@ -75,7 +75,7 @@ public class EnemyPlane extends Plane implements ActionAble {
 	
 	// µÐ¾ü·¢»ð
 	public void fire() {
-		Bullet bullet = new Bullet(x+33, y+80, "bullet/dizidan.png", gc,false);
+		Bullet bullet = new Bullet(x+33, y+80, "bullet/dizidan_01.png", gc,false);
 		gc.bullets.add(bullet);
 	}
 	
