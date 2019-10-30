@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neuedu.dao.SubDao">
+    <insert id="addOneSubject" parameterType="com.neuedu.entity.Subject" >
+        insert into test_subject (url,company,companyAddress,type,jobName,userId,level,upload_date,update_date,status)
+        values (#{url},#{company},#{companyAddress},#{type},#{jobName},#{userId},#{level},now(),now(),0)
+    </insert>
+    <select id="querySubjectByStatusAndUserId" parameterType="com.neuedu.entity.User" resultType="com.neuedu.entity.Subject">
+        select * from test_subject where status=0 or userId=#{id}
+    </select>
+    <select id="querySubjectById" parameterType="int" resultType="com.neuedu.entity.Subject">
+        select url,company,companyAddress,type,jobName,userId,level from test_subject where id=#{id}
+    </select>
+    <update id="updateSubjectById" parameterType="com.neuedu.entity.Subject" >
+            update test_subject set url=#{url}, company=#{company}, companyAddress=#{companyAddress}, type=#{type}, jobName=#{jobName}, level=#{level},
+            update_date=now(),status=0 where id=#{id}
+    </update>
+</mapper>
