@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neuedu.dao.UserDao">
+    <select id="queryUserIsExists" resultType="user" parameterType="user" >
+      select * from test_user WHERE phone = #{phone} AND password = #{password}
+    </select>
+     <insert id="registerUser" parameterType="com.neuedu.entity.User" >
+        insert into test_user (phone,password,nickname,realName,role,iconurl,regDate,updateDate) values (#{phone},#{password},#{nickname},#{realName},0,#{iconurl},now(),now())
+    </insert>
+</mapper>
